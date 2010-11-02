@@ -71,19 +71,10 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 			return $this->error('Either consumerKey or consumerSecret is not properly set');
 		}
 
+		$this->initializeDropbox();
+		//t3lib_div::debug($this->dropbox->getAccountInfo(), 'account info');
+
 		if (isset($_FILES[$this->prefixId])) {
-			if ($this->settings['oauthLibrary'] === 'pear') {
-				$oauth = new Dropbox_OAuth_PEAR($this->settings['consumerKey'], $this->settings['consumerSecret']);
-			} else {
-				$oauth = new Dropbox_OAuth_PHP($this->settings['consumerKey'], $this->settings['consumerSecret']);
-			}
-
-			$this->dropbox = new Dropbox_API($oauth);
-			$token = $this->dropbox->getToken($this->settings['email'], $this->settings['password']);
-			$oauth->setToken($token);
-
-			//print_r($this->dropbox->getAccountInfo());
-
 			if ($this->dropbox->putFile($_FILES[$this->prefixId]['name']['file'], $_FILES[$this->prefixId]['tmp_name']['file'])) {
 				$content .= 'Successfuly uploaded file!';
 			} else {
@@ -101,6 +92,49 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 
 		return $this->pi_wrapInBaseClass($content);
 	}
+
+	/**
+	 * Initializes the Dropbox API object.
+	 *
+	 * @return void
+	 */
+	protected function initializeDropbox() {
+		if ($this->settings['oauthLibrary'] === 'pear') {
+			$oauth = new Dropbox_OAuth_PEAR($this->settings['consumerKey'], $this->settings['consumerSecret']);
+		} else {
+			$oauth = new Dropbox_OAuth_PHP($this->settings['consumerKey'], $this->settings['consumerSecret']);
+		}
+		$this->dropbox = new Dropbox_API($oauth);
+
+		$tokens = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
+			'tokens',
+			'tx_dropboxapi_cache',
+			'email=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($this->settings['email'], 'tx_dropboxapi_cache'),
+			'',
+			'',
+			1
+		);
+
+		if ($tokens) {
+			$tokens = unserialize($tokens[0]['tokens']);
+		} else {
+			$tokens = $this->dropbox->getToken($this->settings['email'], $this->settings['password']);
+
+			$data = array(
+				'crdate' => $GLOBALS['EXEC_TIME'],
+				'email'  => $this->settings['email'],
+				'tokens' => serialize($tokens),
+			);
+
+			$GLOBALS['TYPO3_DB']->exec_INSERTquery(
+				'tx_dropboxapi_cache',
+				$data
+			);
+		}
+
+		$oauth->setToken($tokens);
+	}
+
 
 	/**
 	 * This method performs various initializations.
