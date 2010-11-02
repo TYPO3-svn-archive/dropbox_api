@@ -1,0 +1,8 @@
+	#cat=basic; type=options[PHP OAuth=php, PEAR HTTP_OAUTH=pear]; label=LLL:EXT:dropbox_api/locallang_db.xml:constants.options.oauthLibrary
+oauthLibrary = php
+
+	#cat=basic; type=string; label=LLL:EXT:dropbox_api/pi1/locallang.xml:pi_flexform.consumerKey
+consumerKey =
+
+	#cat=basic; type=string; label=LLL:EXT:dropbox_api/pi1/locallang.xml:pi_flexform.consumerSecret
+consumerSecret =

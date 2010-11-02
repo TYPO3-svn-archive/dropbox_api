@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>module</type>
+		<description>Language labels for extension 'dropbox_api'</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="pi_flexform.consumerKey">Dropbox consumer key: Open your account on https://www.dropbox.com/developers/apps and register a new application under "My Apps".</label>
+			<label index="pi_flexform.consumerSecret">Dropbox consumer secret</label>
+			<label index="pi_flexform.email">Email to log into your Dropbox account</label>
+			<label index="pi_flexform.password">Password to log into your Dropbox account</label>
+		</languageKey>
+	</data>
+</T3locallang>

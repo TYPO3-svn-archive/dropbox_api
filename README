@@ -1,0 +1,3 @@
+- You either need the PHP OAuth extension or PEAR's HTTP_OAUTH
+
+- You will need an consumer key/secret. I guess I'll manage to share mine once this extension is ready but I have to be sure it's OK to do so
