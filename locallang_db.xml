@@ -8,6 +8,7 @@
 		<languageKey index="default" type="array">
 			<label index="tt_content.list_type_pi1">Dropbox Upload Form</label>
 
+			<label index="constants.subcategories.api">API</label>
 			<label index="constants.options.oauthLibrary">OAuth library to use</label>
 		</languageKey>
 	</data>

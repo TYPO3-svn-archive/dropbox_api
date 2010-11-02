@@ -1,0 +1,14 @@
+plugin.tx_dropboxapi {
+
+		# customsubcategory=api=LLL:EXT:dropbox_api/locallang_db.xml:constants.subcategories.api; cat=plugin.tx_dropboxapi/api; type=string; label=LLL:EXT:dropbox_api/pi1/locallang.xml:pi_flexform.email
+	email =
+
+		# cat=plugin.tx_dropboxapi/api; type=string; label=LLL:EXT:dropbox_api/pi1/locallang.xml:pi_flexform.password
+	password =
+
+		# cat=plugin.tx_dropboxapi/enable; type=boolean; label=Debug
+	debug =
+}
+
+### SVN id ###
+# $Id$
