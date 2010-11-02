@@ -151,7 +151,7 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 		$flexformTyposcript = $this->settings['myTS'];
 		unset($this->settings['myTS']);
 		if ($flexformTyposcript) {
-			require_once(PATH_t3lib.'class.t3lib_tsparser.php');
+			require_once(PATH_t3lib . 'class.t3lib_tsparser.php');
 			$tsparser = t3lib_div::makeInstance('t3lib_tsparser');
 			// Copy settings into existing setup
 			$tsparser->setup = $setup;
@@ -185,8 +185,8 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 }
 
 
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/dropbox/pi1/class.tx_dropbox_pi1.php']) {
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/dropbox/pi1/class.tx_dropbox_pi1.php']);
+if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/dropbox_api/pi1/class.tx_dropboxapi_pi1.php']) {
+	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/dropbox_api/pi1/class.tx_dropboxapi_pi1.php']);
 }
 
 ?>
