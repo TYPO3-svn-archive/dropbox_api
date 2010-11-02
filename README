@@ -1,3 +1,6 @@
-- You either need the PHP OAuth extension or PEAR's HTTP_OAUTH
+The library makes use of OAuth. At the moment you can use either of these libraries:
 
-- You will need an consumer key/secret. I guess I'll manage to share mine once this extension is ready but I have to be sure it's OK to do so
+    * PHP OAuth extension (http://pecl.php.net/package/oauth)
+    * PEAR's HTTP_OAUTH package (http://pear.php.net/package/http_oauth)
+
+You will need an consumer key/secret. I guess I'll manage to share mine once this extension is ready but I have to be sure it's OK to do so.
