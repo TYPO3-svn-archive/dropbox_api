@@ -10,6 +10,7 @@
 			<label index="pi_flexform.consumerSecret">Dropbox consumer secret</label>
 			<label index="pi_flexform.email">Email to log into your Dropbox account</label>
 			<label index="pi_flexform.password">Password to log into your Dropbox account</label>
+			<label index="pi_flexform.tsconfig">Typoscript for this content element (plugin.tx_dropboxapi_pi1.[your TS])</label>
 		</languageKey>
 	</data>
 </T3locallang>

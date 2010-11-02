@@ -28,6 +28,18 @@
 					</config>
 				</TCEforms>
 			</password>
+			<myTS>
+				<TCEforms>
+					<displayCond>HIDE_FOR_NON_ADMINS</displayCond>
+					<exclude>1</exclude>
+					<label>LLL:EXT:dropbox_api/pi1/locallang.xml:pi_flexform.tsconfig</label>
+					<config>
+						<type>text</type>
+						<cols>80</cols>
+						<rows>10</rows>
+					</config>
+				</TCEforms>
+			</myTS>
 		</el>
 	</ROOT>
 </T3DataStructure>
