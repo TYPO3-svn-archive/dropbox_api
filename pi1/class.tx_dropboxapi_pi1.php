@@ -86,7 +86,13 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 				if ($_FILES[$this->prefixId]['name'][$file]) {
 					$markerArray = array();
 
-					if ($this->dropbox->putFile($targetDirectory . $_FILES[$this->prefixId]['name'][$file], $_FILES[$this->prefixId]['tmp_name'][$file])) {
+						// Upload the file to Dropbox
+					$success = $this->dropbox->putFile(
+						$targetDirectory . $_FILES[$this->prefixId]['name'][$file],
+						$_FILES[$this->prefixId]['tmp_name'][$file]
+					);
+
+					if ($success) {
 						$markerArray['MESSAGE_CLASS'] = $this->prefixId . '-success';
 						$markerArray['MESSAGE'] = $this->pi_getLL('message_upload_success');
 					} else {
