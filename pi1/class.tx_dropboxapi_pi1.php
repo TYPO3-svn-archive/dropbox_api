@@ -75,18 +75,26 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 		}
 
 		if (isset($_FILES[$this->prefixId])) {
-			if ($this->dropbox->putFile($_FILES[$this->prefixId]['name']['file'], $_FILES[$this->prefixId]['tmp_name']['file'])) {
-				$content .= 'Successfuly uploaded file!';
-			} else {
-				$content .= 'Fail to upload file :(';
+			$targetDirectory = rtrim($this->settings['directory'], '/') . '/';
+			$files = array_keys($_FILES[$this->prefixId]['name']);
+			foreach ($files as $file) {
+				if ($_FILES[$this->prefixId]['name'][$file]) {
+					if ($this->dropbox->putFile($targetDirectory . $_FILES[$this->prefixId]['name'][$file], $_FILES[$this->prefixId]['tmp_name'][$file])) {
+						$content .= '<p>' . $this->pi_getLL('message_upload_success') . '</p>';
+					} else {
+						$content .= '<p>' . $this->pi_getLL('message_upload_failure') . '</p>';
+					}
+				}
 			}
 		}
 
 		$content .= '
 			<form action="' . $this->pi_getPageLink($GLOBALS['TSFE']->id) . '" method="post" enctype="multipart/form-data">
-				<label for="file">File to upload to Dropbox:</label>
-				<input type="file" id="file" name="' . $this->prefixId . '[file]" /><br />
-				<input type="submit" value="Send to Dropbox" />
+				<label for="file_1">' . $this->pi_getLL('label_file_upload') . '</label>
+				<input type="file" id="file_1" name="' . $this->prefixId . '[file_1]" /><br />
+				<label for="file_2">' . $this->pi_getLL('label_file_upload') . '</label>
+				<input type="file" id="file_2" name="' . $this->prefixId . '[file_2]" /><br />
+				<input type="submit" value="' . $this->pi_getLL('label_submit') . '" />
 			</form>
 		';
 
@@ -194,7 +202,7 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 					foreach (array_keys($fields) as $field) {
 						$value = $this->pi_getFFvalue($piFlexForm, $field, $sheet);
 
-						if (!empty($value)) {
+						if (trim($value) !== '') {
 								// Handle dotted fields by transforming them as sub configuration TS
 							$setting =& $this->settings;
 							while (($pos = strpos($field, '.')) !== FALSE) {
@@ -229,11 +237,12 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 			$this->settings = $tsparser->setup['plugin.'][$this->prefixId . '.'];
 		}
 
-			// Allow cObject on application key/secret and authentication email/password
+			// Allow cObject on settings
 		$this->resolveCObject($this->settings, 'application.key');
 		$this->resolveCObject($this->settings, 'application.secret');
 		$this->resolveCObject($this->settings, 'authentication.email');
 		$this->resolveCObject($this->settings, 'authentication.password');
+		$this->resolveCObject($this->settings, 'directory');
 	}
 
 	/**

@@ -1,7 +1,9 @@
 plugin.tx_dropboxapi_pi1 {
 
-	authentication.email    = {$plugin.dropbox_api.authentication.email}
+	authentication.email = {$plugin.dropbox_api.authentication.email}
 	authentication.password = {$plugin.dropbox_api.authentication.password}
+
+	directory = {$plugin.dropbox_api.directory}
 
 	debug = {$plugin.dropbox_api.debug}
 

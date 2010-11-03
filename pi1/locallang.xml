@@ -6,9 +6,18 @@
 	</meta>
 	<data type="array">
 		<languageKey index="default" type="array">
+			<label index="pi_flexform.sheet.general">General</label>
+			<label index="pi_flexform.sheet.authentication">Authentication</label>
+
 			<label index="pi_flexform.authentication.email">Email to log into your Dropbox account (leave empty to inherit TS configuration)</label>
 			<label index="pi_flexform.authentication.password">Password to log into your Dropbox account (leave empty to inherit TS configuration)</label>
+			<label index="pi_flexform.directory">Target directory for uploaded files</label>
 			<label index="pi_flexform.tsconfig">Typoscript for this content element (plugin.tx_dropboxapi_pi1.[your TS])</label>
+
+			<label index="label_file_upload">File to upload to Dropbox:</label>
+			<label index="label_submit">Send to Dropbox</label>
+			<label index="message_upload_success">Successfuly uploaded file!</label>
+			<label index="message_upload_failure">Fail to upload file :(</label>
 		</languageKey>
 	</data>
 </T3locallang>

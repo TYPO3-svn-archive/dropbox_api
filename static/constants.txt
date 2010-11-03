@@ -6,6 +6,9 @@ plugin.dropbox_api {
 		# cat=plugin.dropbox_api/api; type=string; label=LLL:EXT:dropbox_api/locallang_db.xml:constants.authentication.password
 	authentication.password =
 
+		# cat=plugin.dropbox_api/file; type=string; label=LLL:EXT:dropbox_api/locallang_db.xml:constants.directory
+	directory =
+
 		# cat=plugin.dropbox_api/enable; type=boolean; label=Debug
 	debug =
 }
