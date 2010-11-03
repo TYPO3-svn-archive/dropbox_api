@@ -51,6 +51,13 @@ class tx_dropboxapi_wizard {
 	protected $dropbox;
 
 	/**
+	 * Default constructor.
+	 */
+	public function __construct() {
+		$GLOBALS['LANG']->includeLLFile('EXT:' . $this->extKey . '/locallang_db.xml');
+	}
+
+	/**
 	 * Returns a Dropbox directory picker.
 	 *
 	 * @param array $PA TCA configuration passed by reference
@@ -74,7 +81,7 @@ class tx_dropboxapi_wizard {
 		$updateJS .= implode('', $PA['fieldChangeFunc']) . ';return false;';
 
 		$PA['item'] .= '<br />';
-		$PA['item'] .= 'Dropbox directories: <select name="directory_picker" onchange="' . $updateJS . '">';
+		$PA['item'] .= $GLOBALS['LANG']->getLL('wizard.directories') . ' <select name="directory_picker" onchange="' . $updateJS . '">';
 		foreach ($directories as $directory) {
 			$PA['item'] .= sprintf('<option value="%s">%s</option>', $directory, $directory);
 		}
