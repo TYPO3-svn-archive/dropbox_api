@@ -86,13 +86,24 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 			}
 		}
 
+		$template = $this->cObj->fileResource($this->settings['templateFile']);
+		$templateCode = $this->cObj->getSubpart($template, '###UPLOAD_FORM###');
+
+		$markerArray = array(
+			'FORM_PREFIX'       => $this->prefixId,
+			'LABEL_FILE_UPLOAD' => $this->pi_getLL('label_file_upload'),
+			'LABEL_SUBMIT'      => $this->pi_getLL('label_submit'),
+		);
+
+		$formFields = $this->cObj->substituteMarkerArray(
+			$templateCode,
+			$markerArray,
+			'###|###'
+		);
+
 		$content .= '
 			<form action="' . $this->pi_getPageLink($GLOBALS['TSFE']->id) . '" method="post" enctype="multipart/form-data">
-				<label for="file_1">' . $this->pi_getLL('label_file_upload') . '</label>
-				<input type="file" id="file_1" name="' . $this->prefixId . '[file_1]" /><br />
-				<label for="file_2">' . $this->pi_getLL('label_file_upload') . '</label>
-				<input type="file" id="file_2" name="' . $this->prefixId . '[file_2]" /><br />
-				<input type="submit" value="' . $this->pi_getLL('label_submit') . '" />
+				' . $formFields . '
 			</form>
 		';
 

@@ -5,6 +5,8 @@ plugin.tx_dropboxapi_pi1 {
 
 	directory = {$plugin.dropbox_api.directory}
 
+	templateFile = {$plugin.dropbox_api.templateFile}
+
 	debug = {$plugin.dropbox_api.debug}
 
 }

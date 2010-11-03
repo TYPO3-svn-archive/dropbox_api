@@ -16,6 +16,7 @@
 			<label index="constants.authentication.password">Password: Password to log into your Dropbox account</label>
 			<label index="constants.directory">Dropbox directory</label>
 			<label index="constants.library.oauth">OAuth library to use</label>
+			<label index="constants.templateFile">Template</label>
 		</languageKey>
 	</data>
 </T3locallang>

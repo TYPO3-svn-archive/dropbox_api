@@ -105,6 +105,7 @@ class tx_dropboxapi_ts {
 		self::resolveCObject($settings, 'authentication.email');
 		self::resolveCObject($settings, 'authentication.password');
 		self::resolveCObject($settings, 'directory');
+		self::resolveCObject($settings, 'templateFile');
 	}
 
 	/**
