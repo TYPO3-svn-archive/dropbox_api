@@ -22,29 +22,6 @@
 							</config>
 						</TCEforms>
 					</directory>
-					<create_directory>
-						<TCEforms>
-							<exclude>1</exclude>
-							<label>LLL:EXT:dropbox_api/pi1/locallang.xml:pi_flexform.create_directory</label>
-							<config>
-								<type>select</type>
-								<items>
-									<numIndex index="0" type="array">
-										<numIndex index="0">LLL:EXT:dropbox_api/pi1/locallang.xml:pi_flexform.create_directory.inherit</numIndex>
-										<numIndex index="1"></numIndex>
-									</numIndex>
-									<numIndex index="1" type="array">
-										<numIndex index="0">LLL:EXT:dropbox_api/pi1/locallang.xml:pi_flexform.create_directory.yes</numIndex>
-										<numIndex index="1">1</numIndex>
-									</numIndex>
-									<numIndex index="2" type="array">
-										<numIndex index="0">LLL:EXT:dropbox_api/pi1/locallang.xml:pi_flexform.create_directory.no</numIndex>
-										<numIndex index="1">0</numIndex>
-									</numIndex>
-								</items>
-							</config>
-						</TCEforms>
-					</create_directory>
 					<myTS>
 						<TCEforms>
 							<displayCond>HIDE_FOR_NON_ADMINS</displayCond>
