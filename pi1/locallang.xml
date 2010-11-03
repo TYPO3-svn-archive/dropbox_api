@@ -6,8 +6,8 @@
 	</meta>
 	<data type="array">
 		<languageKey index="default" type="array">
-			<label index="pi_flexform.authentication.email">Email to log into your Dropbox account</label>
-			<label index="pi_flexform.authentication.password">Password to log into your Dropbox account</label>
+			<label index="pi_flexform.authentication.email">Email to log into your Dropbox account (leave empty to inherit TS configuration)</label>
+			<label index="pi_flexform.authentication.password">Password to log into your Dropbox account (leave empty to inherit TS configuration)</label>
 			<label index="pi_flexform.tsconfig">Typoscript for this content element (plugin.tx_dropboxapi_pi1.[your TS])</label>
 		</languageKey>
 	</data>

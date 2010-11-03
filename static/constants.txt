@@ -1,12 +1,12 @@
-plugin.tx_dropboxapi {
+plugin.dropbox_api {
 
-		# customsubcategory=api=LLL:EXT:dropbox_api/locallang_db.xml:constants.subcategories.api; cat=plugin.tx_dropboxapi/api; type=string; label=LLL:EXT:dropbox_api/pi1/locallang.xml:pi_flexform.authentication.email
+		# customsubcategory=api=LLL:EXT:dropbox_api/locallang_db.xml:constants.subcategories.api; cat=plugin.dropbox_api/api; type=string; label=LLL:EXT:dropbox_api/locallang_db.xml:constants.authentication.email
 	authentication.email =
 
-		# cat=plugin.tx_dropboxapi/api; type=string; label=LLL:EXT:dropbox_api/pi1/locallang.xml:pi_flexform.authentication.password
+		# cat=plugin.dropbox_api/api; type=string; label=LLL:EXT:dropbox_api/locallang_db.xml:constants.authentication.password
 	authentication.password =
 
-		# cat=plugin.tx_dropboxapi/enable; type=boolean; label=Debug
+		# cat=plugin.dropbox_api/enable; type=boolean; label=Debug
 	debug =
 }
 

@@ -63,16 +63,16 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 	public function main($content, array $settings) {
 		$this->init($settings);
 		$this->pi_setPiVarDefaults();
+		$this->pi_USER_INT_obj = 1;	// Configuring so caching is not expected.
 		$this->pi_loadLL();
 
 		$content = '';
 
-		if (!($this->settings['application.']['key'] && $this->settings['application.']['secret'])) {
-			return $this->error('Either application.key or application.secret is not properly set');
+		try {
+			$this->initializeDropbox();
+		} catch (t3lib_error_Exception $e) {
+			return $this->error($e->getMessage());
 		}
-
-		$this->initializeDropbox();
-		//t3lib_div::debug($this->dropbox->getAccountInfo(), 'account info');
 
 		if (isset($_FILES[$this->prefixId])) {
 			if ($this->dropbox->putFile($_FILES[$this->prefixId]['name']['file'], $_FILES[$this->prefixId]['tmp_name']['file'])) {
@@ -96,9 +96,14 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 	/**
 	 * Initializes the Dropbox API object.
 	 *
+	 * @throws t3lib_error_Exception
 	 * @return void
 	 */
 	protected function initializeDropbox() {
+		if (!($this->settings['application.']['key'] && $this->settings['application.']['secret'])) {
+			throw new t3lib_error_Exception('Either application.key or application.secret is not properly set');
+		}
+
 		if ($this->settings['library.']['oauth'] === 'pear') {
 			$oAuth = new Dropbox_OAuth_PEAR(
 				$this->settings['application.']['key'],
@@ -146,6 +151,14 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 		}
 
 		$oAuth->setToken($tokens);
+
+			// Perform a simple test to ensure connection is established
+		try {
+			$this->dropbox->getAccountInfo();
+		} catch (Dropbox_Exception_Forbidden $e) {
+			throw new t3lib_error_Exception('Access forbidden. You probably have a misconfiguration with'
+				. ' either application.key or application.secret');
+		}
 	}
 
 
