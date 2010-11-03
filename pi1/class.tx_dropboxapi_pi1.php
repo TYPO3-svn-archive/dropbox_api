@@ -72,22 +72,54 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 			return $this->error($e->getMessage());
 		}
 
+		$template = $this->cObj->fileResource($this->settings['templateFile']);
+		$templateCode = $this->cObj->getSubpart($template, '###UPLOAD_FORM###');
+
+		$templateNotification = $this->cObj->getSubpart($templateCode, '###NOTIFICATION###');
+		$templateMessageLine  = $this->cObj->getSubpart($templateNotification, '###MESSAGE_LINE###');
+		$messageLines = array();
+
 		if (isset($_FILES[$this->prefixId])) {
 			$targetDirectory = rtrim($this->settings['directory'], '/') . '/';
 			$files = array_keys($_FILES[$this->prefixId]['name']);
 			foreach ($files as $file) {
 				if ($_FILES[$this->prefixId]['name'][$file]) {
+					$markerArray = array();
+
 					if ($this->dropbox->putFile($targetDirectory . $_FILES[$this->prefixId]['name'][$file], $_FILES[$this->prefixId]['tmp_name'][$file])) {
-						$content .= '<p>' . $this->pi_getLL('message_upload_success') . '</p>';
+						$markerArray['MESSAGE_CLASS'] = $this->prefixId . '-success';
+						$markerArray['MESSAGE'] = $this->pi_getLL('message_upload_success');
 					} else {
-						$content .= '<p>' . $this->pi_getLL('message_upload_failure') . '</p>';
+						$markerArray['MESSAGE_CLASS'] = $this->prefixId . '-failure';
+						$markerArray['MESSAGE'] = $this->pi_getLL('message_upload_failure');
 					}
+
+					$messageLines[] = $this->cObj->substituteMarkerArray(
+						$templateMessageLine,
+						$markerArray,
+						'###|###'
+					);
 				}
 			}
+
+			if ($messageLines) {
+				$templateNotification = $this->cObj->substituteSubpart(
+					$templateNotification,
+					'###MESSAGE_LINE###',
+					implode("\n", $messageLines)
+				);
+			} else {
+				$templateNotification = '';
+			}
+		} else {
+			$templateNotification = '';
 		}
 
-		$template = $this->cObj->fileResource($this->settings['templateFile']);
-		$templateCode = $this->cObj->getSubpart($template, '###UPLOAD_FORM###');
+		$templateCode = $this->cObj->substituteSubpart(
+			$templateCode,
+			'###NOTIFICATION###',
+			$templateNotification
+		);
 
 		$markerArray = array(
 			'FORM_PREFIX'       => $this->prefixId,
