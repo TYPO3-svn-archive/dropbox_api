@@ -35,7 +35,7 @@ require_once(dirname(__FILE__) . '/Dropbox/autoload.php');
  * @subpackage  tx_dropboxapi
  * @author      Xavier Perseguers <typo3@perseguers.ch>
  * @license     http://www.gnu.org/copyleft/gpl.html
- * @version     SVN: $Id: class.tx_dropboxapi_pi1.php 39809 2010-11-03 08:37:09Z xperseguers $
+ * @version     SVN: $Id$
  */
 class tx_dropboxapi_factory {
 
