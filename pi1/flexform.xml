@@ -19,6 +19,13 @@
 								<type>input</type>
 								<size>60</size>
 								<eval>trim</eval>
+								<wizards>
+									<uproc>
+										<type>userFunc</type>
+										<userFunc>tx_dropboxapi_wizard->directoryPicker</userFunc>
+										<params></params>
+									</uproc>
+								</wizards>
 							</config>
 						</TCEforms>
 					</directory>

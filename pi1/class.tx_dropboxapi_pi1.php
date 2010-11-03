@@ -25,8 +25,6 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
-require_once(dirname(__FILE__) . '/../lib/Dropbox/autoload.php');
-
 /**
  * Frontend plugin for the dropbox_api extension.
  *
@@ -69,7 +67,7 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 		$content = '';
 
 		try {
-			$this->initializeDropbox();
+			$this->dropbox = tx_dropboxapi_factory::getDropbox($this->settings);
 		} catch (t3lib_error_Exception $e) {
 			return $this->error($e->getMessage());
 		}
@@ -102,75 +100,6 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 	}
 
 	/**
-	 * Initializes the Dropbox API object.
-	 *
-	 * @throws t3lib_error_Exception
-	 * @return void
-	 */
-	protected function initializeDropbox() {
-		if (!($this->settings['application.']['key'] && $this->settings['application.']['secret'])) {
-			throw new t3lib_error_Exception('Either application.key or application.secret is not properly set');
-		}
-
-		if ($this->settings['library.']['oauth'] === 'pear') {
-			$oAuth = new Dropbox_OAuth_PEAR(
-				$this->settings['application.']['key'],
-				$this->settings['application.']['secret']
-			);
-		} else {
-			$oAuth = new Dropbox_OAuth_PHP(
-				$this->settings['application.']['key'],
-				$this->settings['application.']['secret']
-			);
-		}
-		$this->dropbox = new Dropbox_API($oAuth);
-
-		$tokens = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
-			'tokens',
-			'tx_dropboxapi_cache',
-			'email=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($this->settings['authentication.']['email'], 'tx_dropboxapi_cache'),
-			'',
-			'',
-			1
-		);
-
-		if ($tokens) {
-			$tokens = unserialize($tokens[0]['tokens']);
-		} else {
-			try {
-				$tokens = $this->dropbox->getToken(
-					$this->settings['authentication.']['email'],
-					$this->settings['authentication.']['password']
-				);
-			} catch (OAuthException $e) {
-				throw new t3lib_error_Exception('Invalid credentials');
-			}
-
-			$data = array(
-				'crdate' => $GLOBALS['EXEC_TIME'],
-				'email'  => $this->settings['authentication']['email'],
-				'tokens' => serialize($tokens),
-			);
-
-			$GLOBALS['TYPO3_DB']->exec_INSERTquery(
-				'tx_dropboxapi_cache',
-				$data
-			);
-		}
-
-		$oAuth->setToken($tokens);
-
-			// Perform a simple test to ensure connection is established
-		try {
-			$this->dropbox->getAccountInfo();
-		} catch (Dropbox_Exception_Forbidden $e) {
-			throw new t3lib_error_Exception('Access forbidden. You probably have a misconfiguration with'
-				. ' either application.key or application.secret');
-		}
-	}
-
-
-	/**
 	 * This method performs various initializations.
 	 *
 	 * @param array $settings: Plugin configuration, as received by the main() method
@@ -194,78 +123,8 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 			// Assign the flexform data to a local variable for easier access
 		$piFlexForm = $this->cObj->data['pi_flexform'];
 
-		if (is_array($piFlexForm['data'])) {
-				// Traverse the entire array based on the language
-				// and assign each configuration option to $this->settings array...
-			foreach ($piFlexForm['data'] as $sheet => $langData) {
-				foreach ($langData as $lang => $fields) {
-					foreach (array_keys($fields) as $field) {
-						$value = $this->pi_getFFvalue($piFlexForm, $field, $sheet);
-
-						if (trim($value) !== '') {
-								// Handle dotted fields by transforming them as sub configuration TS
-							$setting =& $this->settings;
-							while (($pos = strpos($field, '.')) !== FALSE) {
-								$prefix = substr($field, 0, $pos + 1);
-								$field = substr($field, $pos + 1);
-
-								$setting =& $setting[$prefix];
-							}
-							$setting[$field] = $value;
-						}
-					}
-				}
-			}
-		}
-
-			// Load full setup to allow references to outside definitions in 'myTS'
-		$globalSetup = $GLOBALS['TSFE']->tmpl->setup;
-		$localSetup = array('plugin.' => array($this->prefixId . '.' => $this->settings));
-		$setup = t3lib_div::array_merge_recursive_overrule($globalSetup, $localSetup);
-
-			// Override configuration with TS from FlexForm itself
-		$flexformTyposcript = $this->settings['myTS'];
-		unset($this->settings['myTS']);
-		if ($flexformTyposcript) {
-			require_once(PATH_t3lib . 'class.t3lib_tsparser.php');
-			$tsparser = t3lib_div::makeInstance('t3lib_tsparser');
-				// Copy settings into existing setup
-			$tsparser->setup = $setup;
-				// Parse the new Typoscript
-			$tsparser->parse('plugin.' . $this->prefixId . "{\n" . $flexformTyposcript . "\n}");
-				// Copy the resulting setup back into settings
-			$this->settings = $tsparser->setup['plugin.'][$this->prefixId . '.'];
-		}
-
-			// Allow cObject on settings
-		$this->resolveCObject($this->settings, 'application.key');
-		$this->resolveCObject($this->settings, 'application.secret');
-		$this->resolveCObject($this->settings, 'authentication.email');
-		$this->resolveCObject($this->settings, 'authentication.password');
-		$this->resolveCObject($this->settings, 'directory');
-	}
-
-	/**
-	 * Resolves CObject on a given array of settings.
-	 *
-	 * @param array &$settings
-	 * @param string $key
-	 * @return void
-	 */
-	protected function resolveCObject(array &$settings, $key) {
-		if (($pos = strpos($key, '.')) !== FALSE) {
-			$subKey = substr($key, $pos + 1);
-			$key = substr($key, 0, $pos + 1);
-
-			$this->resolveCObject($settings[$key], $subKey);
-		} else {
-			if (isset($settings[$key . '.'])) {
-				$settings[$key] = $this->cObj->cObjGetSingle(
-					$settings[$key],
-					$settings[$key . '.']
-				);
-			}
-		}
+		tx_dropboxapi_ts::$contentObj = $this->cObj;
+		tx_dropboxapi_ts::overrideSettings($this->prefixId, $this->settings, $piFlexForm);
 	}
 
 	/**

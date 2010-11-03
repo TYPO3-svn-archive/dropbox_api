@@ -1,5 +1,6 @@
 2010-11-03  Xavier Perseguers  <typo3@perseguers.ch>
 
+	* Added wizard to select a Dropbox directory as target for uploads
 	* Major refactoring in configuration options
 
 2010-11-02  Xavier Perseguers  <typo3@perseguers.ch>
