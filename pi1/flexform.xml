@@ -6,28 +6,28 @@
 	<ROOT>
 		<type>array</type>
 		<el>
-			<email>
+			<authentication.email>
 				<TCEforms>
 					<exclude>1</exclude>
-					<label>LLL:EXT:dropbox_api/pi1/locallang.xml:pi_flexform.email</label>
+					<label>LLL:EXT:dropbox_api/pi1/locallang.xml:pi_flexform.authentication.email</label>
 					<config>
 						<type>input</type>
 						<size>30</size>
 						<eval>trim</eval>
 					</config>
 				</TCEforms>
-			</email>
-			<password>
+			</authentication.email>
+			<authentication.password>
 				<TCEforms>
 					<exclude>1</exclude>
-					<label>LLL:EXT:dropbox_api/pi1/locallang.xml:pi_flexform.password</label>
+					<label>LLL:EXT:dropbox_api/pi1/locallang.xml:pi_flexform.authentication.password</label>
 					<config>
 						<type>input</type>
 						<size>20</size>
 						<eval>password</eval>
 					</config>
 				</TCEforms>
-			</password>
+			</authentication.password>
 			<myTS>
 				<TCEforms>
 					<displayCond>HIDE_FOR_NON_ADMINS</displayCond>

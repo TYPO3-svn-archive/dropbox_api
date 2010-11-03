@@ -67,8 +67,8 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 
 		$content = '';
 
-		if (!($this->settings['consumerKey'] && $this->settings['consumerSecret'])) {
-			return $this->error('Either consumerKey or consumerSecret is not properly set');
+		if (!($this->settings['application.']['key'] && $this->settings['application.']['secret'])) {
+			return $this->error('Either application.key or application.secret is not properly set');
 		}
 
 		$this->initializeDropbox();
@@ -99,17 +99,23 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 	 * @return void
 	 */
 	protected function initializeDropbox() {
-		if ($this->settings['oauthLibrary'] === 'pear') {
-			$oauth = new Dropbox_OAuth_PEAR($this->settings['consumerKey'], $this->settings['consumerSecret']);
+		if ($this->settings['library.']['oauth'] === 'pear') {
+			$oAuth = new Dropbox_OAuth_PEAR(
+				$this->settings['application.']['key'],
+				$this->settings['application.']['secret']
+			);
 		} else {
-			$oauth = new Dropbox_OAuth_PHP($this->settings['consumerKey'], $this->settings['consumerSecret']);
+			$oAuth = new Dropbox_OAuth_PHP(
+				$this->settings['application.']['key'],
+				$this->settings['application.']['secret']
+			);
 		}
-		$this->dropbox = new Dropbox_API($oauth);
+		$this->dropbox = new Dropbox_API($oAuth);
 
 		$tokens = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
 			'tokens',
 			'tx_dropboxapi_cache',
-			'email=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($this->settings['email'], 'tx_dropboxapi_cache'),
+			'email=' . $GLOBALS['TYPO3_DB']->fullQuoteStr($this->settings['authentication.']['email'], 'tx_dropboxapi_cache'),
 			'',
 			'',
 			1
@@ -118,11 +124,18 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 		if ($tokens) {
 			$tokens = unserialize($tokens[0]['tokens']);
 		} else {
-			$tokens = $this->dropbox->getToken($this->settings['email'], $this->settings['password']);
+			try {
+				$tokens = $this->dropbox->getToken(
+					$this->settings['authentication.']['email'],
+					$this->settings['authentication.']['password']
+				);
+			} catch (OAuthException $e) {
+				throw new t3lib_error_Exception('Invalid credentials');
+			}
 
 			$data = array(
 				'crdate' => $GLOBALS['EXEC_TIME'],
-				'email'  => $this->settings['email'],
+				'email'  => $this->settings['authentication']['email'],
 				'tokens' => serialize($tokens),
 			);
 
@@ -132,7 +145,7 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 			);
 		}
 
-		$oauth->setToken($tokens);
+		$oAuth->setToken($tokens);
 	}
 
 
@@ -169,7 +182,15 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 						$value = $this->pi_getFFvalue($piFlexForm, $field, $sheet);
 
 						if (!empty($value)) {
-							$this->settings[$field] = $value;
+								// Handle dotted fields by transforming them as sub configuration TS
+							$setting =& $this->settings;
+							while (($pos = strpos($field, '.')) !== FALSE) {
+								$prefix = substr($field, 0, $pos + 1);
+								$field = substr($field, $pos + 1);
+
+								$setting =& $setting[$prefix];
+							}
+							$setting[$field] = $value;
 						}
 					}
 				}
@@ -187,12 +208,41 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 		if ($flexformTyposcript) {
 			require_once(PATH_t3lib . 'class.t3lib_tsparser.php');
 			$tsparser = t3lib_div::makeInstance('t3lib_tsparser');
-			// Copy settings into existing setup
+				// Copy settings into existing setup
 			$tsparser->setup = $setup;
-			// Parse the new Typoscript
-			$tsparser->parse('plugin.' . $this->prefixId . '.' . $flexformTyposcript);
-			// Copy the resulting setup back into settings
+				// Parse the new Typoscript
+			$tsparser->parse('plugin.' . $this->prefixId . "{\n" . $flexformTyposcript . "\n}");
+				// Copy the resulting setup back into settings
 			$this->settings = $tsparser->setup['plugin.'][$this->prefixId . '.'];
+		}
+
+			// Allow cObject on application key/secret and authentication email/password
+		$this->resolveCObject($this->settings, 'application.key');
+		$this->resolveCObject($this->settings, 'application.secret');
+		$this->resolveCObject($this->settings, 'authentication.email');
+		$this->resolveCObject($this->settings, 'authentication.password');
+	}
+
+	/**
+	 * Resolves CObject on a given array of settings.
+	 *
+	 * @param array &$settings
+	 * @param string $key
+	 * @return void
+	 */
+	protected function resolveCObject(array &$settings, $key) {
+		if (($pos = strpos($key, '.')) !== FALSE) {
+			$subKey = substr($key, $pos + 1);
+			$key = substr($key, 0, $pos + 1);
+
+			$this->resolveCObject($settings[$key], $subKey);
+		} else {
+			if (isset($settings[$key . '.'])) {
+				$settings[$key] = $this->cObj->cObjGetSingle(
+					$settings[$key],
+					$settings[$key . '.']
+				);
+			}
 		}
 	}
 

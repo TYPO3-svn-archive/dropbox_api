@@ -9,7 +9,9 @@
 			<label index="tt_content.list_type_pi1">Dropbox Upload Form</label>
 
 			<label index="constants.subcategories.api">API</label>
-			<label index="constants.options.oauthLibrary">OAuth library to use</label>
+			<label index="constants.library.oauth">OAuth library to use</label>
+			<label index="constants.application.key">Dropbox application key: Go to https://www.dropbox.com/developers/apps, sign-in and register a new application under "My Apps".</label>
+			<label index="constants.application.secret">Dropbox application secret</label>
 		</languageKey>
 	</data>
 </T3locallang>
