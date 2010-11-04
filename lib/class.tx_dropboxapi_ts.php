@@ -55,7 +55,7 @@ class tx_dropboxapi_ts {
 	 * @param array $piFlexForm
 	 * @return void
 	 */
-	public static function overrideSettings($prefixId, array &$settings, array $piFlexForm) {
+	public static function overrideSettings($prefixId, array &$settings, array $piFlexForm, array $globalSetup) {
 		if (is_array($piFlexForm['data'])) {
 				// Traverse the entire array based on the language
 				// and assign each configuration option to $this->settings array...
@@ -81,7 +81,6 @@ class tx_dropboxapi_ts {
 		}
 
 			// Load full setup to allow references to outside definitions in 'myTS'
-		$globalSetup = $GLOBALS['TSFE']->tmpl->setup;
 		$localSetup = array('plugin.' => array($prefixId . '.' => $settings));
 		$setup = t3lib_div::array_merge_recursive_overrule($globalSetup, $localSetup);
 

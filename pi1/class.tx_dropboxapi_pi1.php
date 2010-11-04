@@ -173,7 +173,7 @@ class tx_dropboxapi_pi1 extends tslib_pibase {
 		$piFlexForm = $this->cObj->data['pi_flexform'];
 
 		tx_dropboxapi_ts::$contentObj = $this->cObj;
-		tx_dropboxapi_ts::overrideSettings($this->prefixId, $this->settings, $piFlexForm);
+		tx_dropboxapi_ts::overrideSettings($this->prefixId, $this->settings, $piFlexForm, $GLOBALS['TSFE']->tmpl->setup);
 	}
 
 	/**

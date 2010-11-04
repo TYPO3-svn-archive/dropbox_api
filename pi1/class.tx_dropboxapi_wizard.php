@@ -123,7 +123,6 @@ class tx_dropboxapi_wizard {
 	 * @return void
 	 */
 	protected function init(array $PA) {
-		$pid  = $PA['pid'];
 		$this->prefixId = str_replace($this->extKey, 'tx_' . str_replace('_', '', $this->extKey), $PA['row']['list_type']);
 
 			// Initialize default values based on extension TS
@@ -132,11 +131,9 @@ class tx_dropboxapi_wizard {
 			$this->settings = array();
 		}
 
-		$this->initializeFrontendTemplate($pid);
-		$settings = $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.'];
-		if (!is_array($settings)) {
-			$settings = array();
-		}
+		$globalSetup = $this->getSetup($PA['pid']);
+
+		$settings = isset($globalSetup['plugin.'][$this->prefixId . '.']) ? $globalSetup['plugin.'][$this->prefixId . '.'] : array();
 
 			// Base configuration is equal the the plugin's TS setup
 		$this->settings = array_merge($this->settings, $settings);
@@ -145,28 +142,25 @@ class tx_dropboxapi_wizard {
 		if (!is_array($piFlexForm)) {
 			$piFlexForm = array();
 		}
-		tx_dropboxapi_ts::overrideSettings($this->prefixId, $this->settings, $piFlexForm);
-
-		unset($GLOBALS['TSFE']);
-		unset($GLOBALS['TT']);
+		tx_dropboxapi_ts::overrideSettings($this->prefixId, $this->settings, $piFlexForm, $globalSetup);
 	}
 
 	/**
-	 * Returns the frontend template for a given page.
+	 * Returns the frontend TypoScript setup.
 	 *
-	 * @param integer $pid
-	 * @return t3lib_tstemplate
+	 * @param integer $pageUid
+	 * @return array
 	 */
-	protected function initializeFrontendTemplate($pid) {
-		$GLOBALS['TT'] = new t3lib_timeTrackNull();
-		$GLOBALS['TSFE'] = t3lib_div::makeInstance('tslib_fe', $GLOBALS['TYPO3_CONF_VARS'], $pid, 0);
-		$GLOBALS['TSFE']->initFEuser();
-		//$GLOBALS['TSFE']->checkAlternativeIdMethods();
-		//$GLOBALS['TSFE']->clear_preview();
-		$GLOBALS['TSFE']->determineId();
-		$GLOBALS['TSFE']->initTemplate();
-		$GLOBALS['TSFE']->getFromCache();
-		$GLOBALS['TSFE']->getConfigArray();
+	protected function getSetup($pageUid) {
+		$sysPageObj = t3lib_div::makeInstance('t3lib_pageSelect');
+		$rootLine = $sysPageObj->getRootLine($pageUid);
+		$TSObj = t3lib_div::makeInstance('t3lib_tsparser_ext');
+		$TSObj->tt_track = 0;
+		$TSObj->init();
+		$TSObj->runThroughTemplates($rootLine);
+		$TSObj->generateConfig();
+
+		return $TSObj->setup;
 	}
 }
 
